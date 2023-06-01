@@ -23,11 +23,12 @@ stages:
             displayName: tfinstall
             inputs:
               terraformVersion: 'latest'
-          - task: TerraformTaskV4@4
+          - task: TerraformTaskV4@4a
             displayName: init
             inputs:
               provider: 'azurerm'
               command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
               backendServiceArm: 'nms-tf-connection'
               backendAzureRmResourceGroupName: '$(bkstgrg)'
               backendAzureRmStorageAccountName: '$(bkstg)'
@@ -38,6 +39,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'validate'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
   - stage: tfdeploy
     condition: succeeded('tfvalidate')
     dependsOn: tfvalidate
@@ -53,6 +55,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
               backendServiceArm: 'nms-tf-connection'
               backendAzureRmResourceGroupName: '$(bkstgrg)'
               backendAzureRmStorageAccountName: '$(bkstg)'
@@ -63,10 +66,13 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
               environmentServiceNameAzureRM: 'nms-tf-connection'
           - task: TerraformTaskV4@4
             displayName: apply
             inputs:
               provider: 'azurerm'
               command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
               environmentServiceNameAzureRM: 'nms-tf-connection'
+          
